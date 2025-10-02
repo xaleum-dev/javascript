@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Manajemen Produk</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 70%;
+      margin-top: 15px;
+    }
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: center;
+    }
+    th {
+      background-color: lightgray;
+    }
+    form {
+      margin-top: 20px;
+    }
+    input {
+      margin: 5px;
+      padding: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Manajemen Produk</h2>
+  
+  <!-- Tombol tampil -->
+  <button id="btnTampil">Tampilkan Produk</button>
+  
+  <!-- Form tambah produk -->
+  <form id="formTambah">
+    <input type="text" id="namaProduk" placeholder="Nama Produk" required>
+    <input type="number" id="hargaProduk" placeholder="Harga Produk" required>
+    <button type="submit">Tambah Produk</button>
+  </form>
+  
+  <!-- Form hapus produk -->
+  <form id="formHapus">
+    <input type="number" id="idProduk" placeholder="ID Produk yang akan dihapus" required>
+    <button type="submit">Hapus Produk</button>
+  </form>
+  
+  <!-- Output tabel -->
+  <div id="output"></div>
+
+  <script>
+    // **Data Produk awal (minimal 5)**
+    let produkList = [
+      { id: 1, nama: "Laptop", harga: 12000000 },
+      { id: 2, nama: "Smartphone", harga: 5000000 },
+      { id: 3, nama: "Tablet", harga: 7000000 },
+      { id: 4, nama: "Headphone", harga: 1500000 },
+      { id: 5, nama: "Printer", harga: 2000000 }
+    ];
+
+    // **Event Handler Object**
+    const eventHandler = {
+      tampil: () => tampilkanProduk()
+    };
+
+    // **Menambahkan Produk dengan Spread Operator**
+    function tambahProduk(nama, harga) {
+      const id = produkList.length ? produkList[produkList.length - 1].id + 1 : 1;
+      produkList = [...produkList, { id, nama, harga }];
+      alert(`Produk ${nama} berhasil ditambahkan!`);
+      tampilkanProduk();
+    }
+
+    // **Menghapus Produk dengan Rest Parameter**
+    function hapusProduk(...id) {
+      const awal = produkList.length;
+      produkList = produkList.filter(p => !id.includes(p.id));
+      if (produkList.length < awal) {
+        alert(`Produk dengan id ${id} berhasil dihapus!`);
+      } else {
+        alert(`Produk dengan id ${id} tidak ditemukan!`);
+      }
+      tampilkanProduk();
+    }
+
+    // **Menampilkan Produk dengan Destructuring (dalam tabel)**
+    function tampilkanProduk() {
+      let table = `
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nama Produk</th>
+              <th>Harga</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      for (let {id, nama, harga} of produkList) {
+        table += `
+          <tr>
+            <td>${id}</td>
+            <td>${nama}</td>
+            <td>Rp ${harga.toLocaleString("id-ID")}</td>
+          </tr>
+        `;
+      }
+
+      table += `</tbody></table>`;
+      document.getElementById("output").innerHTML = table;
+    }
+
+    // **Event Listener**
+    document.getElementById("btnTampil").addEventListener("click", eventHandler.tampil);
+
+    // Form tambah produk
+    document.getElementById("formTambah").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const nama = document.getElementById("namaProduk").value;
+      const harga = parseInt(document.getElementById("hargaProduk").value);
+      tambahProduk(nama, harga);
+      this.reset(); // kosongkan form setelah tambah
+    });
+
+    // Form hapus produk
+    document.getElementById("formHapus").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const id = parseInt(document.getElementById("idProduk").value);
+      hapusProduk(id);
+      this.reset(); // kosongkan form setelah hapus
+    });
+
+    // Tampilkan otomatis saat halaman dibuka
+    tampilkanProduk();
+  </script>
+</body>
+</html>
